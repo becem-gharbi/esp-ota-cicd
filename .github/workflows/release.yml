@@ -61,3 +61,22 @@ jobs:
   publish:
     needs: build_upload
     runs-on: ubuntu-latest
+    steps:
+      - name: Publish MQTT message
+        run: >-
+          docker run hivemq/mqtt-cli pub
+          --topic ${{ vars.MQTT_PUB_TOPIC }}
+          --retain
+          --qos 2
+          --contentType application/json
+          --host ${{ secrets.MQTT_HOST }}
+          --port ${{ secrets.MQTT_PORT }}
+          --mqttVersion ${{ secrets.MQTT_VERSION }}
+          --secure ${{ secrets.MQTT_SECURE }}
+          --user ${{ secrets.MQTT_USER }}
+          --password ${{ secrets.MQTT_PASSWORD }}
+          --message "{ 
+            \"repository\": \"${{env.REPO}}\", 
+            \"tag\": \"${{env.TAG}}\", 
+            \"url\": \"${{format('{0}/{1}', secrets.S3_PUBLIC_URL, env.BIN_BUCKET_PATH )}}\" 
+            }"
