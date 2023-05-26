@@ -1,6 +1,6 @@
 # ESP OTA CI/CD
 
-This project provides an CI/CD pipeline designed for seamless software updates to `ESP32` over the air.
+This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`.
 
 ## How it works
 
@@ -16,27 +16,31 @@ This project provides an CI/CD pipeline designed for seamless software updates t
 
 - If the received firmware is newer, `ESP32` then downloads it and performs the necessary flashing process to update its firmware.
 
-
 ## CI/CD settings
 
-The settings depends on the CI/CD tool used. An integration with `Github Actions` is provided.
+The settings depends on the CI/CD tool used. An integration with `Github Actions` is provided via `.github/workflows/release.yml`.
+The variables and secrets **should** be set as described in [docs](https://docs.github.com/en/actions/learn-github-actions/variables).
 
-| **Secrets**          | **Notes** |
-| -------------------- | --------- |
-| MQTT_HOST            |           |
-| MQTT_PORT            |           |
-| MQTT_SECURE          |           |
-| MQTT_VERSION         |           |
-| MQTT_USER            |           |
-| MQTT_PASSWORD        |           |
-| S3_ACCESS_KEY_ID     |           |
-| S3_SECRET_ACCESS_KEY |           |
-| S3_ENDPOINT_URL      |           |
-| S3_REGION            |           |
-| S3_PUBLIC_URL        |           |
-| S3_BUCKET            |           |
+### Secrets
 
-| **Variables**  | **Notes** |
-| -------------- | --------- |
-| MQTT_PUB_TOPIC |           |
-| PIO_ENV        |           |
+| **Secrets**          | **Notes**                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| MQTT_HOST            | The MQTT host, eg `broker.hivemq.com`                                              |
+| MQTT_PORT            | The MQTT TCP port, eg `1883`                                                       |
+| MQTT_SECURE          | Whether a default SSL configuration is used, can be set to `false` or ` ` for true |
+| MQTT_VERSION         | The MQTT version can be set to `3` or `5`                                          |
+| MQTT_USER            | The username for MQTT authentication                                               |
+| MQTT_PASSWORD        | The password for MQTT authentication                                               |
+| S3_ACCESS_KEY_ID     | The S3 client ID                                                                   |
+| S3_SECRET_ACCESS_KEY | The S3 client secret                                                               |
+| S3_ENDPOINT_URL      | The S3 endpoint, check provider                                                    |
+| S3_REGION            | The S3 region, check provider                                                      |
+| S3_BUCKET            | The S3 bucket used, should be public                                               |
+| S3_PUBLIC_URL        | The public URL of the provided bucket                                              |
+
+### Variables
+
+| **Variables**  | **Notes**                                                     |
+| -------------- | ------------------------------------------------------------- |
+| MQTT_PUB_TOPIC | The MQTT topic to which the release message will be published |
+| PIO_ENV        | Environment to build, check `platformio.ini`                  |
