@@ -7,10 +7,10 @@ on:
 
 # Global environment variables
 env:
-    TAG: ${{github.ref_name}}
-    REPO: ${{github.repository}}
-    BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
-    BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
+  TAG: ${{github.ref_name}}
+  REPO: ${{github.repository}}
+  BIN_PATH: ${{ format('{0}/.pio/build/{1}/firmware.bin', github.workspace, vars.PIO_ENV ) }}
+  BIN_BUCKET_PATH: ${{ format('{0}/{1}.bin', github.repository, github.ref_name ) }}
 
 # Run only once, no concurrency
 concurrency:
@@ -22,6 +22,22 @@ concurrency:
 jobs:
   build_upload:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Build PlatformIO Project
+        run: pio run --environment ${{vars.PIO_ENV}}
 
   publish:
     needs: build_upload
