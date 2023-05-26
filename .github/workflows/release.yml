@@ -1,0 +1,21 @@
+name: OTA
+
+# Triggered when new release published
+on:
+  release:
+    types: [published]
+
+# Run only once, no concurrency
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+# build_upload: Compiles source code & Creates executable & Upload executable to S3 bucket
+# publish: Sends to a specific topic an MQTT message containing the version & download url
+jobs:
+  build_upload:
+    runs-on: ubuntu-latest
+
+  publish:
+    needs: build_upload
+    runs-on: ubuntu-latest
