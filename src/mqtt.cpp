@@ -60,9 +60,37 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
         break;
     case MQTT_EVENT_DATA:
         Serial.printf("[mqtt] data received from topic %s \n", event->topic);
-        Serial.printf("[mqtt] data is %s \n", event->data);
+        if (strcmp(event->topic, "test1") == 0)
+            handleRelease(event->data);
         break;
     default:
         break;
     }
+}
+
+void handleRelease(char *data)
+{
+    StaticJsonDocument<48> doc;
+    DeserializationError error = deserializeJson(doc, data);
+
+    if (error)
+    {
+        Serial.printf("[mqtt] failed to parse received data");
+        return;
+    }
+
+    const char *repository = doc["repository"];
+    const char *tag = doc["tag"];
+    const char *url = doc["url"];
+
+    Serial.printf("[mqtt] repo: %s | tag: %s | url: %s", repository, tag, url);
+
+    if (isVersionNew())
+    {
+    }
+}
+
+bool isVersionNew()
+{
+    return true;
 }
