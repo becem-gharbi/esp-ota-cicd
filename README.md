@@ -1,10 +1,10 @@
 # ESP OTA CI/CD
 
-This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`.
+This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle updates.
 
 ## How it works
 
-- Upon a new software release, depending on the CI/CD tool used a workflow is triggered.
+- Upon a new software release, depending on the CI/CD tool used, a workflow is triggered.
 
 - The code is compiled to generate the executable file `firmware.bin`.
 
@@ -12,9 +12,9 @@ This project provides an CI/CD pipeline designed for seamless remote software up
 
 - An MQTT message is sent the release topic on which `ESP32` is subscribed. The message contains the firmware version and the download URL.
 
-- `ESP32` receives the message and checks the version against the running version.
+- The library receives the message and checks the version against the running version.
 
-- If the received firmware is newer, `ESP32` then downloads it and performs the necessary flashing process to update its firmware.
+- If the received firmware is newer, then the library downloads it and performs the necessary flashing process.
 
 ## CI/CD settings
 
@@ -44,3 +44,5 @@ The variables and secrets **should** be set as described in [docs](https://docs.
 | -------------- | ------------------------------------------------------------- |
 | MQTT_PUB_TOPIC | The MQTT topic to which the release message will be published |
 | PIO_ENV        | Environment to build, check `platformio.ini`                  |
+
+## Library settings
