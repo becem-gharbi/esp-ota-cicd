@@ -39,6 +39,25 @@ jobs:
       - name: Build PlatformIO Project
         run: pio run --environment ${{vars.PIO_ENV}}
 
+      - name: Create aws-cli container
+        run: docker run --entrypoint /bin/sh -itd --name aws-cli amazon/aws-cli
+
+      - name: Configure access key
+        run: docker exec aws-cli aws configure set aws_access_key_id ${{secrets.S3_ACCESS_KEY_ID}}
+
+      - name: Configure secret key
+        run: docker exec aws-cli aws configure set aws_secret_access_key ${{secrets.S3_SECRET_ACCESS_KEY}}
+
+      - name: Copy firmware.bin to aws-cli container
+        run: docker cp ${{env.BIN_PATH}} aws-cli:/firmware.bin
+
+      - name: Upload firmware.bin to S3 bucket
+        run: >-
+          docker exec aws-cli aws s3 cp ../firmware.bin ${{format('s3://{0}/{1}', secrets.S3_BUCKET, env.BIN_BUCKET_PATH)}}
+          --output json
+          --endpoint-url ${{secrets.S3_ENDPOINT_URL}}
+          --region ${{secrets.S3_REGION}}
+
   publish:
     needs: build_upload
     runs-on: ubuntu-latest
