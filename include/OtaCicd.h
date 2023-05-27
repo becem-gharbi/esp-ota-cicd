@@ -26,10 +26,12 @@ public:
     static esp_mqtt_client_handle_t mqttClient;
 
 private:
+    static String _certPem;
+    static String _releaseTopic;
+    static Preferences _preferences;
     static bool _setVersion(String version);
     static ReleaseMessage _parseMessage(String message);
     static void _onMqttData(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
-    static String _releaseTopic;
 };
 
 #endif

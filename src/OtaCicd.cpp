@@ -1,12 +1,14 @@
 #include "OtaCicd.h"
 
-String gCertPem;
-Preferences gPreferences;
+String OtaCicd::_certPem;
+String OtaCicd::_releaseTopic;
+Preferences OtaCicd::_preferences;
+esp_mqtt_client_handle_t OtaCicd::mqttClient;
 
 bool OtaCicd::init(String certPem)
 {
-    gCertPem = certPem;
-    return gPreferences.begin("ota-cicd");
+    _certPem = certPem;
+    return _preferences.begin("ota-cicd");
 }
 
 bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t mqttConfig)
@@ -19,7 +21,7 @@ bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t
         return false;
     }
 
-    esp_err_t err = esp_mqtt_client_register_event(mqttClient, MQTT_EVENT_DATA, _onMqttData, mqttClient);
+    esp_err_t err = esp_mqtt_client_register_event(mqttClient, MQTT_EVENT_ANY, _onMqttData, mqttClient);
 
     if (err != ESP_OK)
     {
@@ -57,7 +59,7 @@ void OtaCicd::start(String message)
 
     HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
 
-    HttpsOTA.begin(releaseMessage.url.c_str(), gCertPem.c_str());
+    HttpsOTA.begin(releaseMessage.url.c_str(), _certPem.c_str());
 
     for (;;)
     {
@@ -66,18 +68,18 @@ void OtaCicd::start(String message)
         switch (HttpsOTA.status())
         {
         case (HTTPS_OTA_IDLE):
-            Serial.printf("[otaCicd] upgrade have not started yet \n");
+            Serial.printf("[otaCicd] update have not started yet \n");
             break;
         case (HTTPS_OTA_UPDATING):
-            Serial.printf("[otaCicd] upgarde is in progress \n");
+            Serial.printf("[otaCicd] update in progress \n");
             break;
         case (HTTPS_OTA_SUCCESS):
-            Serial.printf("[otaCicd] upgrade is successful \n");
+            Serial.printf("[otaCicd] update is successful \n");
             ota_running = false;
             _setVersion(releaseVersion);
             break;
         case (HTTPS_OTA_FAIL):
-            Serial.printf("[otaCicd] upgrade failed \n");
+            Serial.printf("[otaCicd] update failed \n");
             ota_running = false;
             break;
         case (HTTPS_OTA_ERR):
@@ -99,12 +101,12 @@ void OtaCicd::start(String message)
 
 String OtaCicd::getVersion()
 {
-    return gPreferences.getString("version", "unknown");
+    return _preferences.getString("version", "unknown");
 }
 
 bool OtaCicd::_setVersion(String version)
 {
-    if (gPreferences.putString("version", version) > 0)
+    if (_preferences.putString("version", version) > 0)
     {
         return true;
     }
@@ -133,9 +135,28 @@ ReleaseMessage OtaCicd::_parseMessage(String message)
 void OtaCicd::_onMqttData(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
 {
     esp_mqtt_event_handle_t event = *((esp_mqtt_event_handle_t *)(&event_data));
+    esp_mqtt_client_handle_t client = event->client;
 
-    if (event_id == MQTT_EVENT_DATA && strcmp(event->topic, _releaseTopic.c_str()) == 0)
+    switch (event_id)
     {
-        start(event->data);
+    case MQTT_EVENT_CONNECTED:
+        Serial.printf("[ota-cicd] mqtt client connected \n");
+        esp_mqtt_client_subscribe(client, _releaseTopic.c_str(), 2);
+        break;
+
+    case MQTT_EVENT_DISCONNECTED:
+        Serial.printf("[ota-cicd] mqtt client disconnected \n");
+        break;
+
+    case MQTT_EVENT_SUBSCRIBED:
+        Serial.printf("[ota-cicd] mqtt client subscribed to release topic\n");
+        break;
+
+    case MQTT_EVENT_DATA:
+        if (strcmp(event->topic, _releaseTopic.c_str()) == 0)
+        {
+            start(event->data);
+        }
+        break;
     }
 }
