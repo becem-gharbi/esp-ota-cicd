@@ -69,9 +69,10 @@ void OtaCicd::start(String message)
 
     HttpsOTA.begin(releaseMessage.url.c_str(), _certPem.c_str());
 
-    bool ota_running = true;
+    bool otaRunning = true;
+    bool updateSuccess = false;
 
-    while (ota_running)
+    while (otaRunning)
     {
         switch (HttpsOTA.status())
         {
@@ -85,22 +86,28 @@ void OtaCicd::start(String message)
 
         case HTTPS_OTA_SUCCESS:
             Serial.printf("[otaCicd] update is successful \n");
-            ota_running = false;
-            _setVersion(releaseVersion);
+            otaRunning = false;
+            updateSuccess = true;
             break;
 
         case HTTPS_OTA_FAIL:
             Serial.printf("[otaCicd] update failed \n");
-            ota_running = false;
+            otaRunning = false;
             break;
 
         case HTTPS_OTA_ERR:
             Serial.printf("[otaCicd] error occured while creating xEventGroup() \n");
-            ota_running = false;
+            otaRunning = false;
             break;
         }
 
         delay(1000);
+    }
+
+    if (updateSuccess)
+    {
+        _setVersion(releaseVersion);
+        ESP.restart();
     }
 }
 

@@ -93,12 +93,6 @@ void setup()
 
   Serial.println("WiFi connected");
 
-  String message = "{ 'repository' : 'becem-gharbi/esp-ota-cicd', 'tag' : '0.0.1', 'url' : 'https://esp-ota-cicd.s3.us-east-005.backblazeb2.com/becem-gharbi/esp-ota-cicd/0.0.1.bin' }";
-
-  // otaCicd.init(s3CertPem);
-
-  // otaCicd.start(message);
-
   esp_mqtt_client_config_t mqttConfig = {
       .uri = mqtt_uri,
       .client_id = mqtt_client_id,
