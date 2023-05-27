@@ -7,6 +7,7 @@
 #include <HttpsOTAUpdate.h>
 #include <esp_https_ota.h>
 #include <esp_http_client.h>
+#include <mqtt_client.h>
 
 struct ReleaseMessage
 {
@@ -18,15 +19,17 @@ struct ReleaseMessage
 class OtaCicd
 {
 public:
-    bool init(String certPem);
-    void start(String message);
-    String getVersion();
+    static bool init(String certPem);
+    static bool init(String certPem, String releaseTopic, esp_mqtt_client_config_t mqttConfig);
+    static void start(String message);
+    static String getVersion();
+    static esp_mqtt_client_handle_t mqttClient;
 
 private:
-    String _certPem;
-    Preferences _preferences;
-    bool _setVersion(String version);
-    ReleaseMessage _parseMessage(String message);
+    static bool _setVersion(String version);
+    static ReleaseMessage _parseMessage(String message);
+    static void _onMqttData(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
+    static String _releaseTopic;
 };
 
 #endif
