@@ -6,8 +6,6 @@ OtaCicd otaCicd;
 
 const String ssid = "ASUR_AP";
 const String password = "pass1234";
-// const char *ssid = "TTBOX-Q6HPV6";
-// const char *password = "VYA9SKVLZE";
 const char *mqtt_uri = "mqtts://e4745a01661b4766ac5ca1d32f777e19.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "user1";
 const char *mqtt_password = "User1pass";
