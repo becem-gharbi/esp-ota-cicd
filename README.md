@@ -1,6 +1,6 @@
 # ESP OTA CI/CD
 
-This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle updates.
+This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle updates. 
 
 ## How it works
 
@@ -45,4 +45,3 @@ The variables and secrets **should** be set as described in [docs](https://docs.
 | MQTT_PUB_TOPIC | The MQTT topic to which the release message will be published |
 | PIO_ENV        | Environment to build, check `platformio.ini`                  |
 
-## Library settings
