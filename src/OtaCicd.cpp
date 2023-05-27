@@ -7,8 +7,16 @@ esp_mqtt_client_handle_t OtaCicd::mqttClient;
 
 bool OtaCicd::init(String certPem)
 {
-    _certPem = certPem;
-    return _preferences.begin("ota-cicd");
+    if (_preferences.begin("ota-cicd"))
+    {
+        String currentVersion = getVersion();
+        Serial.printf("[ota-cicd] detected version %s \n", currentVersion);
+
+        _certPem = certPem;
+        return true;
+    }
+
+    return false;
 }
 
 bool OtaCicd::init(String certPem, String releaseTopic, esp_mqtt_client_config_t mqttConfig)
@@ -55,47 +63,44 @@ void OtaCicd::start(String message)
         return;
     }
 
-    Serial.printf("[otaCicd] new firmware found \n");
+    Serial.printf("[otaCicd] new version found %s \n", releaseVersion);
 
     HttpsOTA.onHttpEvent([](HttpEvent_t *event) {});
 
     HttpsOTA.begin(releaseMessage.url.c_str(), _certPem.c_str());
 
-    for (;;)
-    {
-        bool ota_running = true;
+    bool ota_running = true;
 
+    while (ota_running)
+    {
         switch (HttpsOTA.status())
         {
-        case (HTTPS_OTA_IDLE):
+        case HTTPS_OTA_IDLE:
             Serial.printf("[otaCicd] update have not started yet \n");
             break;
-        case (HTTPS_OTA_UPDATING):
+
+        case HTTPS_OTA_UPDATING:
             Serial.printf("[otaCicd] update in progress \n");
             break;
-        case (HTTPS_OTA_SUCCESS):
+
+        case HTTPS_OTA_SUCCESS:
             Serial.printf("[otaCicd] update is successful \n");
             ota_running = false;
             _setVersion(releaseVersion);
             break;
-        case (HTTPS_OTA_FAIL):
+
+        case HTTPS_OTA_FAIL:
             Serial.printf("[otaCicd] update failed \n");
             ota_running = false;
             break;
-        case (HTTPS_OTA_ERR):
+
+        case HTTPS_OTA_ERR:
             Serial.printf("[otaCicd] error occured while creating xEventGroup() \n");
             ota_running = false;
             break;
-        default:
-            break;
         }
 
-        if (!ota_running)
-        {
-            break;
-        }
-
-        delay(500);
+        delay(1000);
     }
 }
 
