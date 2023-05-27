@@ -1,0 +1,5 @@
+otadata,data,ota,36K,8K,
+nvs,data,nvs,44K,24K,
+spiffs,data,spiffs,68K,1408K,
+app0,app,ota_0,1536K,1280K,
+app1,app,ota_1,2816K,1280K,
