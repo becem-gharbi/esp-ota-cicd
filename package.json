@@ -1,6 +1,6 @@
 {
   "name": "esp-ota-cicd",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle updates.",
   "main": "index.js",
   "directories": {

@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v0.1.2
+
+[compare changes](https://github.com/becem-gharbi/esp-ota-cicd/compare/v0.1.1...v0.1.2)
+
+
+### 💅 Refactors
+
+  - Use scope operator for static methods, instantiation not required ([9591be8](https://github.com/becem-gharbi/esp-ota-cicd/commit/9591be8))
+
+### 📖 Documentation
+
+  - Update readme ([18ff33c](https://github.com/becem-gharbi/esp-ota-cicd/commit/18ff33c))
+
+### ❤️  Contributors
+
+- Becem-gharbi
+
 ## v0.1.1
 
 [compare changes](https://github.com/becem-gharbi/esp-ota-cicd/compare/0.0.0...v0.1.1)
