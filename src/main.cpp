@@ -2,10 +2,8 @@
 #include <WiFi.h>
 #include "OtaCicd.h"
 
-OtaCicd otaCicd;
-
-const String ssid = "ASUR_AP";
-const String password = "pass1234";
+const char *ssid = "ASUR_AP";
+const char *password = "pass1234";
 const char *mqtt_uri = "mqtts://e4745a01661b4766ac5ca1d32f777e19.s1.eu.hivemq.cloud:8883";
 const char *mqtt_user = "user1";
 const char *mqtt_password = "User1pass";
@@ -81,7 +79,7 @@ void setup()
   Serial.begin(115200);
   Serial.println();
 
-  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -98,7 +96,7 @@ void setup()
       .password = mqtt_password,
       .cert_pem = mqtt_cert_pem};
 
-  otaCicd.init(s3CertPem, releaseTopic, mqttConfig);
+  OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 }
 
 void loop()

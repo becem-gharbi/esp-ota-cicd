@@ -7,10 +7,8 @@
 #include <WiFi.h>
 #include "OtaCicd.h"
 
-OtaCicd otaCicd;
-
-const String ssid = "";          // WiFi AP ssid
-const String password = "";      // WiFi AP password
+const char *ssid = "";           // WiFi AP ssid
+const char *password = "";       // WiFi AP password
 const char *mqtt_uri = "";       // MQTT url <protocol>://<host>:<port>
 const char *mqtt_user = "";      // MQTT username
 const char *mqtt_password = "";  // MQTT password
@@ -24,7 +22,7 @@ void setup()
     Serial.begin(115200);
     Serial.println();
 
-    WiFi.begin(ssid.c_str(), password.c_str());
+    WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -41,7 +39,7 @@ void setup()
         .password = mqtt_password,
         .cert_pem = mqtt_cert_pem};
 
-    otaCicd.init(s3CertPem, releaseTopic, mqttConfig);
+    OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 }
 
 void loop()
