@@ -1,6 +1,6 @@
 # ESP OTA CI/CD
 
-This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle updates.
+This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle deployment.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ This project provides an CI/CD pipeline designed for seamless remote software up
 
 - Upon a new software release, depending on the CI/CD tool used, a workflow is triggered.
 
-- The code is compiled to generate the executable file `firmware.bin`.
+- The code is compiled to generate the executable binary.
 
 - The executable is uploaded to an S3 compatible bucket.
 
@@ -20,7 +20,7 @@ This project provides an CI/CD pipeline designed for seamless remote software up
 
 - The library receives the message and checks the version against the running version.
 
-- If the received firmware is newer, then the library downloads it and performs the necessary flashing process.
+- If the received firmware is newer, the library downloads it and performs the necessary flashing process.
 
 ## CI/CD settings
 
@@ -50,3 +50,40 @@ The variables and secrets **should** be set as described in [docs](https://docs.
 | -------------- | ------------------------------------------------------------- |
 | MQTT_PUB_TOPIC | The MQTT topic to which the release message will be published |
 | PIO_ENV        | Environment to build, check `platformio.ini`                  |
+
+## Library usage
+
+In order to automatically deploy the new firmware, this project provides a platformIO library
+
+```
+pio pkg install --library "bg-dev/OtaCicd"
+```
+
+The library esposes `OtaCicd` class which implements an MQTT client and an OTA handler with secure HTTP connections. You just need to instantiate an instance and initialize it
+
+```C++
+esp_mqtt_client_config_t mqttConfig = {
+    .uri = mqtt_uri,
+    .client_id = mqtt_client_id,
+    .username = mqtt_user,
+    .password = mqtt_password,
+    .cert_pem = mqtt_cert_pem};
+
+otaCicd.init(s3CertPem, releaseTopic, mqttConfig);
+```
+
+In case you want to implement an MQTT client independently, you can call `start` method upon receiving a release message.
+
+```C++
+otaCicd.init(s3CertPem);
+
+otaCicd.start(message);
+```
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contribution you make is greatly appreciated.
+
+## License
+
+[MIT License](./LICENSE)

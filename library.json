@@ -1,6 +1,6 @@
 {
   "name": "OtaCicd",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "A library to run OTA from CI/CD workflow",
   "keywords": "CI-CD, ota, esp32, github",
   "repository": {
