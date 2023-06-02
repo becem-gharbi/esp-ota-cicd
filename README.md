@@ -59,7 +59,7 @@ In order to automatically deploy the new firmware, this project provides a platf
 pio pkg install --library "bg-dev/OtaCicd"
 ```
 
-The library esposes `OtaCicd` class which implements an MQTT client and an OTA handler with secure HTTP connections. You just need to initialize it
+The library exposes `OtaCicd` class which implements an MQTT client and an OTA handler with secure HTTP connections. You just need to initialize it
 
 ```C++
 esp_mqtt_client_config_t mqttConfig = {
