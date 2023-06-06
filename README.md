@@ -1,6 +1,6 @@
 # ESP OTA CI/CD
 
-This project provides an CI/CD pipeline designed for seamless remote software updates to `ESP32`. Plus, a PlatformIO library to automatically handle deployment.
+This project provides an CI/CD pipeline designed for seamless remote software updates to *ESP32* including a PlatformIO library to automatically handle deployment.
 
 ## Requirements
 
