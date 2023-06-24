@@ -16,7 +16,7 @@ This project provides a CI/CD pipeline designed for seamless remote software upd
 
 - The executable is uploaded to an S3 compatible bucket.
 
-- An MQTT message is sent the release topic on which `ESP32` is subscribed. The message contains the firmware version and the download URL.
+- An MQTT message is sent to the release topic on which `ESP32` is subscribed. The message contains the firmware version and the download URL.
 
 - The library receives the message and checks the version against the running version.
 
