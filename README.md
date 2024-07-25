@@ -1,6 +1,9 @@
 # ESP OTA CI/CD
 
-This project provides a CI/CD pipeline designed for seamless remote software updates to *ESP32* including a PlatformIO library to automatically handle deployment.
+> [!TIP]
+> To visually apply the OTA update, it's recommended to use [ESP Admin](https://esp-admin.tn/) which is a web platform for remote management of ESP32 microcontrollers.
+
+This project provides a CI/CD pipeline for seamless remote software updates to *ESP32*, including a PlatformIO library that automatically handles deployment.
 
 ## Requirements
 
@@ -14,7 +17,7 @@ This project provides a CI/CD pipeline designed for seamless remote software upd
 
 - The code is compiled to generate the executable binary.
 
-- The executable is uploaded to an S3 compatible bucket.
+- The executable is uploaded to an S3-compatible bucket.
 
 - An MQTT message is sent to the release topic on which `ESP32` is subscribed. The message contains the firmware version and the download URL.
 
@@ -24,7 +27,7 @@ This project provides a CI/CD pipeline designed for seamless remote software upd
 
 ## CI/CD settings
 
-The settings depends on the CI/CD tool used. An integration with `Github Actions` is provided via `.github/workflows/release.yml`.
+The settings depend on the CI/CD tool used. An integration with `Github Actions` is provided via `.github/workflows/release.yml`.
 The variables and secrets **should** be set as described in [docs](https://docs.github.com/en/actions/learn-github-actions/variables).
 
 ### Secrets
@@ -53,7 +56,7 @@ The variables and secrets **should** be set as described in [docs](https://docs.
 
 ## Library usage
 
-In order to automatically deploy the new firmware, this project provides a platformIO library
+To automatically deploy the new firmware, this project provides a PlatformIO library
 
 ```
 pio pkg install --library "bg-dev/OtaCicd"
@@ -72,17 +75,13 @@ esp_mqtt_client_config_t mqttConfig = {
 OtaCicd::init(s3CertPem, releaseTopic, mqttConfig);
 ```
 
-In case you want to implement an MQTT client independently, you can call `start` method upon receiving a release message.
+In case you want to implement an MQTT client independently, you can call the `start` method upon receiving a release message.
 
 ```C++
 OtaCicd::init(s3CertPem);
 
 OtaCicd::start(message);
 ```
-
-## Contributing
-
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contribution you make is greatly appreciated.
 
 ## License
 
